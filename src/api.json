@@ -1,0 +1,30 @@
+{
+    "matches": [
+      {
+        "teamHome": "Toulouse FC",
+        "teamExt": "AS Saint-Etienne",
+        "logoHome": "https://upload.wikimedia.org/wikipedia/fr/archive/8/8b/20200405225214%21Logo_Toulouse_FC_2018.svg",
+        "logoExt": "https://i.pinimg.com/originals/fe/35/2b/fe352b5dbbd07530b1400fdd2f236a4a.png",
+        "scoreHome": "0",
+        "scoreExt": "0",
+        "teamHomeColor": "#3C2955",
+        "teamExtColor": "#006A32"
+      },
+      {
+        "teamHome": "FC Nantes",
+        "teamExt": "Paris Saint-Germain",
+        "logoHome": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/FC_Nantes_2019_logo.svg/803px-FC_Nantes_2019_logo.svg.png",
+        "logoExt": "https://upload.wikimedia.org/wikipedia/fr/thumb/4/4a/Paris_Saint-Germain_Football_Club_%28logo%29.svg/1200px-Paris_Saint-Germain_Football_Club_%28logo%29.svg.png",
+        "scoreHome": "0",
+        "scoreExt": "0",
+        "teamHomeColor": "#FFDC00",
+        "teamExtColor": "#172D5C"
+      }
+    ],
+    "teams": [
+      "Toulouse FC",
+      "Paris Saint-Germain",
+      "FC Nantes",
+      "AS Saint-Etienne"
+    ]
+  }
