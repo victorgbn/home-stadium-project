@@ -1,9 +1,6 @@
 <template>
   <div id="app">
     {{data}}
-      <div class="">
-
-      </div>
   </div>
 </template>
 
@@ -17,8 +14,6 @@ export default {
   data () {
     return {
       data: null, 
-      team1: null, 
-      team
     }
   },
   mounted () {
