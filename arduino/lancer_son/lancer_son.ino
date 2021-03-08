@@ -28,7 +28,7 @@ void playFirst()
 {
   execute_CMD(0x3F, 0, 0);
   delay(500);
-  setVolume(20);
+  setVolume(100);
   delay(500);
   execute_CMD(0x11,0,1); 
   delay(500);
