@@ -12,9 +12,9 @@
 HardwareSerial mySerial(1);
 DFRobotDFPlayerMini myDFPlayer;
 
-const char* ssid = "faclab";
-const char* password = "faclab11";
-const char* api = "http://victorgaubin.fr/api.json";
+const char* ssid = "LPDW-IOT";
+const char* password = "LPDWIOTROUTER2015";
+const char* api = "http://victorgaubin.fr/api/api.json";
 
 HTTPClient http;
 
