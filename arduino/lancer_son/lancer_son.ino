@@ -19,6 +19,7 @@ DFRobotDFPlayerMini myDFPlayer;
 const char* ssid = "";
 const char* password = "";
 const char* api = "http://victorgaubin.fr/api/api.json";
+//const char* customApi = "http://victorgaubin.fr/api/api.json";
 
 String translateEncryptionType(wifi_auth_mode_t encryptionType) {
  
@@ -87,10 +88,11 @@ unsigned long startTime = millis();
 int loopCount = 0;
 String msg;
 int alreadyOn = 0;
-int M0HSI = 0;
+/*int M0HSI = 0;
 int M0ESI = 0;
 int M1HSI = 0;
-int M1ESI = 0;
+int M1ESI = 0;*/
+int but = 0;
 
 void setup () {
   //wifi_stage = 0;
@@ -135,161 +137,6 @@ void setup () {
 /* Définition des couleurs */
 int COLOR[3];
 int OFF[3] = {0, 0, 0}; // Éteint
-
-void loop () { 
-  switch (wifi_stage)
-  {
-    case SCAN_START:
-      SerialBT.println("Scanning Wi-Fi networks");
-      Serial.println("Scanning Wi-Fi networks");
-      scan_wifi_networks();
-      SerialBT.println("Please enter the number for your Wi-Fi");
-      wifi_stage = SCAN_COMPLETE;
-      break;
-
-    case SSID_ENTERED:
-      SerialBT.println("Please enter your Wi-Fi password");
-      Serial.println("Please enter your Wi-Fi password");
-      wifi_stage = WAIT_PASS;
-      break;
-
-    case PASS_ENTERED:
-      SerialBT.println("Please wait for Wi-Fi connection...");
-      Serial.println("Please wait for Wi_Fi connection...");
-      wifi_stage = WAIT_CONNECT;
-      preferences.putString("pref_ssid", client_wifi_ssid);
-      preferences.putString("pref_pass", client_wifi_password);
-      if (init_wifi()) { // Connected to WiFi
-        connected_string = "ESP32 IP: ";
-        connected_string = connected_string + WiFi.localIP().toString();
-        SerialBT.println(connected_string);
-        Serial.println(connected_string);
-        bluetooth_disconnect = true;
-      } else { // try again
-        wifi_stage = LOGIN_FAILED;
-      }
-      break;
-
-    case LOGIN_FAILED:
-      SerialBT.println("Wi-Fi connection failed");
-      Serial.println("Wi-Fi connection failed");
-      delay(2000);
-      wifi_stage = SCAN_START;
-      break;
-  }
-
-  if (socket_server.poll()) {
-    disconnect_bluetooth();
-    auto client = socket_server.accept();
-  }
-  
-  if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
- 
-    HTTPClient http;
- 
-    http.begin(api); //Specify the URL
-    int httpCode = http.GET();  //Make the request
- 
-    if (httpCode > 0) { //Check for the returning code
- 
-        String payload = http.getString();
-
-        //strip.setBrightness(100); // Règle la luminosité à 100 % de la luminosité maximale
-
-        DynamicJsonDocument doc(2048);
-        DeserializationError error = deserializeJson(doc, payload);
-        
-        int M0HS = doc["matches"][0]["scoreHome"];
-        int M0ES = doc["matches"][0]["scoreExt"];
-        int M1HS = doc["matches"][1]["scoreHome"];
-        int M1ES = doc["matches"][1]["scoreExt"];
-      
-        msg = Serial.readString();
-
-        if (M0HS != M0HSI) {
-          int music = doc["matches"][0]["teamHomeMusic"];
-
-          int RP = doc["matches"][0]["teamHomeColorRP"];
-          int GP = doc["matches"][0]["teamHomeColorGP"];
-          int BP = doc["matches"][0]["teamHomeColorBP"];
-          int RS = doc["matches"][0]["teamHomeColorRS"];
-          int GS = doc["matches"][0]["teamHomeColorGS"];
-          int BS = doc["matches"][0]["teamHomeColorBS"];
-
-          int COLOR_P[3] = {RP, GP, BP};
-          int COLOR_S[3] = {RS, GS, BS};
-          
-          ambiance(music, COLOR_P,COLOR_S);
-      
-
-          M0HSI = M0HS;
-          
-        } else if (M0ES != M0ESI) {
-          int music = doc["matches"][0]["teamExtMusic"];
-
-          int RP = doc["matches"][0]["teamExtColorRP"];
-          int GP = doc["matches"][0]["teamExtColorGP"];
-          int BP = doc["matches"][0]["teamExtColorBP"];
-          int RS = doc["matches"][0]["teamExtColorRS"];
-          int GS = doc["matches"][0]["teamExtColorGS"];
-          int BS = doc["matches"][0]["teamExtColorBS"];
-
-          int COLOR_P[3] = {RP, GP, BP};
-          int COLOR_S[3] = {RS, GS, BS};
-          
-          ambiance(music, COLOR_P,COLOR_S);
-      
-
-          M0ESI = M0ES;
-          
-        } else if (M1HS != M1HSI) {
-          int music = doc["matches"][1]["teamHomeMusic"];
-
-          int RP = doc["matches"][1]["teamHomeColorRP"];
-          int GP = doc["matches"][1]["teamHomeColorGP"];
-          int BP = doc["matches"][1]["teamHomeColorBP"];
-          int RS = doc["matches"][1]["teamHomeColorRS"];
-          int GS = doc["matches"][1]["teamHomeColorGS"];
-          int BS = doc["matches"][1]["teamHomeColorBS"];
-
-          int COLOR_P[3] = {RP, GP, BP};
-          int COLOR_S[3] = {RS, GS, BS};
-          
-          ambiance(music, COLOR_P,COLOR_S);
-      
-
-          M1HSI = M1HS;
-          
-        } else if (M1ES != M1ESI) {
-          int music = doc["matches"][1]["teamExtMusic"];
-
-          int RP = doc["matches"][1]["teamExtColorRP"];
-          int GP = doc["matches"][1]["teamExtColorGP"];
-          int BP = doc["matches"][1]["teamExtColorBP"];
-          int RS = doc["matches"][1]["teamExtColorRS"];
-          int GS = doc["matches"][1]["teamExtColorGS"];
-          int BS = doc["matches"][1]["teamExtColorBS"];
-
-          int COLOR_P[3] = {RP, GP, BP};
-          int COLOR_S[3] = {RS, GS, BS};
-          
-          ambiance(music, COLOR_P,COLOR_S);
-      
-
-          M1ESI = M1ES;
-        }
-        
-
-     } else {
-      Serial.println("Error on HTTP request");
-    }
- 
-    http.end(); //Free the resources
-  }
- 
-  delay(30000);
-  
-}
 
 void ambiance(int MUSIC, int COLOR_LEFT[], int COLOR_RIGHT[])
 {
@@ -403,4 +250,108 @@ void disconnect_bluetooth()
   Serial.println("BT stopped");
   delay(1000);
   bluetooth_disconnect = false;
+}
+
+void favorite()
+{
+    HTTPClient http;
+ 
+    http.begin(api); //Specify the URL
+    int httpCode = http.GET();  //Make the request
+    
+  if (httpCode > 0) { //Check for the returning code
+ 
+        String payload = http.getString();
+
+        //strip.setBrightness(100); // Règle la luminosité à 100 % de la luminosité maximale
+
+        DynamicJsonDocument doc(2048);
+        DeserializationError error = deserializeJson(doc, payload);
+
+        String team = "ASSE";
+        int newBut = but + 1;
+        //int newBut = doc["events"]["intHomeScore"]; //or doc["events"]["intAwayScore"]
+
+        int n = doc.size();
+
+        for (int i = 0; i < n; i++) {
+          if (doc["data"][i]["team"] == team && newBut > but) {
+            int RF = doc["data"][i]["RF"];
+            int GF = doc["data"][i]["GF"];
+            int BF = doc["data"][i]["BF"];
+            int RS = doc["data"][i]["RS"];
+            int GS = doc["data"][i]["GS"];
+            int BS = doc["data"][i]["BS"];
+
+            int music = doc["data"][i]["music"];
+            int COLOR_F[3] = {RF, GF, BF};
+            int COLOR_S[3] = {RS, GS, BS};
+
+            ambiance(music, COLOR_F,COLOR_S);
+            but = newBut;
+          }
+        }
+
+        
+    } else {
+      Serial.println("Error on HTTP request");
+    }
+ 
+    http.end(); //Free the resources
+}
+
+void loop () { 
+  switch (wifi_stage)
+  {
+    case SCAN_START:
+      SerialBT.println("Scanning Wi-Fi networks");
+      Serial.println("Scanning Wi-Fi networks");
+      scan_wifi_networks();
+      SerialBT.println("Please enter the number for your Wi-Fi");
+      wifi_stage = SCAN_COMPLETE;
+      break;
+
+    case SSID_ENTERED:
+      SerialBT.println("Please enter your Wi-Fi password");
+      Serial.println("Please enter your Wi-Fi password");
+      wifi_stage = WAIT_PASS;
+      break;
+
+    case PASS_ENTERED:
+      SerialBT.println("Please wait for Wi-Fi connection...");
+      Serial.println("Please wait for Wi_Fi connection...");
+      wifi_stage = WAIT_CONNECT;
+      preferences.putString("pref_ssid", client_wifi_ssid);
+      preferences.putString("pref_pass", client_wifi_password);
+      if (init_wifi()) { // Connected to WiFi
+        connected_string = "ESP32 IP: ";
+        connected_string = connected_string + WiFi.localIP().toString();
+        SerialBT.println(connected_string);
+        Serial.println(connected_string);
+        bluetooth_disconnect = true;
+      } else { // try again
+        wifi_stage = LOGIN_FAILED;
+      }
+      break;
+
+    case LOGIN_FAILED:
+      SerialBT.println("Wi-Fi connection failed");
+      Serial.println("Wi-Fi connection failed");
+      delay(2000);
+      wifi_stage = SCAN_START;
+      break;
+  }
+
+  if (socket_server.poll()) {
+    disconnect_bluetooth();
+    auto client = socket_server.accept();
+  }
+  
+  if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
+    
+    favorite();
+ 
+  delay(30000);
+  }
+  
 }
